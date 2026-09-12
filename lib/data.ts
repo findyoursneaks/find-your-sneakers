@@ -3,7 +3,6 @@ const SUPABASE_KEY = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY || 'sb_pub
 
 const headers = {
   apikey: SUPABASE_KEY,
-  Authorization: `Bearer ${SUPABASE_KEY}`,
   'Content-Type': 'application/json',
 };
 
@@ -39,11 +38,12 @@ export type Product = {
 };
 
 async function supabaseFetch<T>(path: string, init?: RequestInit): Promise<T> {
-  const response = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
+  const options: RequestInit & { next?: { revalidate: number } } = {
     ...init,
     headers: { ...headers, ...(init?.headers || {}) },
-    next: init?.method ? undefined : { revalidate: 300 },
-  });
+  };
+  if (!init?.method || init.method === 'GET') options.next = { revalidate: 300 };
+  const response = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, options);
   if (!response.ok) throw new Error(`Supabase ${response.status}: ${await response.text()}`);
   if (response.status === 204) return undefined as T;
   return response.json();
