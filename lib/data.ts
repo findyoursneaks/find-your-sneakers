@@ -38,12 +38,22 @@ export type Product = {
 };
 
 async function supabaseFetch<T>(path: string, init?: RequestInit): Promise<T> {
-  const options: RequestInit & { next?: { revalidate: number } } = {
+  const requestHeaders = new Headers(headers);
+  if (init?.headers) {
+    new Headers(init.headers).forEach((value, key) => requestHeaders.set(key, value));
+  }
+
+  const options: RequestInit = {
     ...init,
-    headers: { ...headers, ...(init?.headers || {}) },
+    headers: requestHeaders,
   };
-  if (!init?.method || init.method === 'GET') options.next = { revalidate: 300 };
-  const response = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, options);
+
+  const url = `${SUPABASE_URL}/rest/v1/${path}`;
+  const isGet = !init?.method || init.method.toUpperCase() === 'GET';
+  const response = isGet
+    ? await fetch(url, { ...options, next: { revalidate: 300 } })
+    : await fetch(url, options);
+
   if (!response.ok) throw new Error(`Supabase ${response.status}: ${await response.text()}`);
   if (response.status === 204) return undefined as T;
   return response.json();
