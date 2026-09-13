@@ -1,16 +1,20 @@
-# Find Your Sneakers
+# SOLEWAR
 
 European sneaker price comparison and discovery platform.
 
+**Live domain:** https://solewar.com
+
 ## Product model
-Find Your Sneakers does not hold inventory or process payments. Product offers redirect shoppers to retailers, with support planned for affiliate/tracking links.
+SOLEWAR does not hold inventory or process payments. Product offers redirect shoppers to retailers and can use affiliate/tracking links where eligible.
 
 ## Stack
 - Next.js App Router
 - React
 - TypeScript
 - Responsive custom CSS
-- Vercel-ready
+- Netlify
+- Supabase
+- Awin affiliate integration foundation
 
 ## Local development
 ```bash
@@ -19,6 +23,6 @@ npm run dev
 ```
 
 ## Commercial launch roadmap
-The repository now contains the premium responsive storefront MVP and UI interactions. Before commercial launch, connect a real product/offer database, retailer feeds or affiliate APIs, authentication/wishlist persistence, newsletter provider, analytics/consent management, affiliate click tracking, AdSense after approval, localization/currency handling, and production legal content.
+The repository contains the responsive storefront MVP, product comparison UI, affiliate click routing, newsletter endpoint and affiliate-feed integration foundation. Before full commercial launch, complete live retailer feed ingestion, automated product/offer syncing, authentication/wishlist persistence, analytics and consent management, localization/currency handling, production email/newsletter delivery and final legal/contact details.
 
 Never fabricate retailer prices or availability in production. Offers should have source timestamps and retailer attribution.
