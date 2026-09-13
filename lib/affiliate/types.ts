@@ -11,6 +11,7 @@ export type NormalizedAffiliateOffer = {
     name: string;
     slug: string;
     model?: string;
+    description?: string;
     gender?: 'men' | 'women' | 'kids' | 'unisex';
     colorway?: string;
     imageUrl?: string;
