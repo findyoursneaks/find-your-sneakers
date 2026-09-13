@@ -2,19 +2,29 @@ import type { Metadata } from 'next';
 import './globals.css';
 import './extra.css';
 
+const siteUrl = 'https://solewar.com';
+
 export const metadata: Metadata = {
-  metadataBase: new URL('https://findyoursneakers.com'),
+  metadataBase: new URL(siteUrl),
   title: {
-    default: 'Find Your Sneakers — Compare sneaker prices across Europe',
-    template: '%s | Find Your Sneakers',
+    default: 'SOLEWAR — Compare sneaker prices across Europe',
+    template: '%s | SOLEWAR',
   },
-  description: 'Search, compare and discover sneaker prices from leading European retailers.',
-  applicationName: 'Find Your Sneakers',
+  description: 'Compare sneaker prices from leading European retailers and find the best offer for the pair you want.',
+  applicationName: 'SOLEWAR',
+  alternates: { canonical: '/' },
+  keywords: ['sneakers', 'sneaker price comparison', 'Nike', 'adidas', 'New Balance', 'ASICS', 'On', 'Europe'],
   openGraph: {
-    title: 'Find Your Sneakers',
-    description: 'Find the right sneaker. At the right price.',
+    title: 'SOLEWAR — Find it. Compare it. Win it.',
+    description: 'One search. Multiple stores. Find the best sneaker price across Europe.',
+    url: siteUrl,
     type: 'website',
-    siteName: 'Find Your Sneakers',
+    siteName: 'SOLEWAR',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'SOLEWAR — Compare sneaker prices across Europe',
+    description: 'One search. Multiple stores. Find the best sneaker price across Europe.',
   },
 };
 
