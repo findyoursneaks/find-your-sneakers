@@ -6,6 +6,9 @@ type AwinGoogleFeedItem = {
   title?: string;
   description?: string;
   link?: string;
+  aw_deep_link?: string;
+  deep_link?: string;
+  tracking_url?: string;
   image_link?: string;
   brand?: string;
   price?: string | number;
@@ -46,9 +49,7 @@ export async function downloadAwinEnhancedFeed(params: {
     headers: { Authorization: `Bearer ${params.token}` },
     cache: 'no-store',
   });
-  if (!response.ok) {
-    throw new Error(`Awin feed download failed (${response.status})`);
-  }
+  if (!response.ok) throw new Error(`Awin feed download failed (${response.status})`);
   return response.text();
 }
 
@@ -65,12 +66,13 @@ export function parseAwinJsonlFeed(input: string, retailer: {
     try { item = JSON.parse(row) as AwinGoogleFeedItem; } catch { continue; }
 
     const productUrl = item.link;
+    const affiliateUrl = item.aw_deep_link || item.tracking_url || item.deep_link || item.link;
     const brand = item.brand?.trim();
     const name = item.title?.trim();
     const regular = parseMoney(item.price);
     const sale = parseMoney(item.sale_price);
     const effectivePrice = sale ?? regular;
-    if (!productUrl || !brand || !name || effectivePrice == null || effectivePrice < 0) continue;
+    if (!productUrl || !affiliateUrl || !brand || !name || effectivePrice == null || effectivePrice < 0) continue;
 
     offers.push(normalizeAffiliateOffer({
       retailer: {
@@ -85,6 +87,7 @@ export function parseAwinJsonlFeed(input: string, retailer: {
         name,
         slug: slugify(`${brand}-${name}-${item.id || item.mpn || item.gtin || ''}`),
         model: item.mpn || item.id,
+        description: item.description,
         gender: mapGender(item.gender),
         colorway: item.color,
         imageUrl: item.image_link,
@@ -96,7 +99,7 @@ export function parseAwinJsonlFeed(input: string, retailer: {
         oldPrice: sale != null && regular != null && regular >= sale ? regular : undefined,
         currency: 'EUR',
         productUrl,
-        affiliateUrl: productUrl,
+        affiliateUrl,
         inStock: !/(out of stock|unavailable)/i.test(item.availability || ''),
         sizes: item.size ? [item.size] : [],
         countryCode: retailer.countryCode || 'EU',
