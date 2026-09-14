@@ -17,7 +17,9 @@ jobs:
         with:
           node-version: 22
       - name: Install dependencies
-        run: npm install --no-audit --no-fund
+        run: npm ci --no-audit --no-fund
+      - name: Test catalogue rules
+        run: npm test
       - name: Build
         env:
           NEXT_PUBLIC_SUPABASE_URL: https://iwbrmjchqcpvcvvrgfvh.supabase.co

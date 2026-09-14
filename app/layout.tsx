@@ -12,7 +12,6 @@ export const metadata: Metadata = {
   },
   description: 'Compare sneaker prices from leading European retailers and find the best offer for the pair you want.',
   applicationName: 'SOLEWAR',
-  alternates: { canonical: '/' },
   keywords: ['sneakers', 'sneaker price comparison', 'Nike', 'adidas', 'New Balance', 'ASICS', 'On', 'Europe'],
   openGraph: {
     title: 'SOLEWAR — Find it. Compare it. Win it.',
