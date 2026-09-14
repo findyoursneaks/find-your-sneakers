@@ -1,3 +1,5 @@
+import { liveOffers } from './offers';
+
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://iwbrmjchqcpvcvvrgfvh.supabase.co';
 const SUPABASE_KEY = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY || 'sb_publishable_XB79v_WDUxiI-0LH2NixeQ_H0Rt70O1';
 
@@ -75,8 +77,8 @@ export async function getBrands(): Promise<Brand[]> {
 }
 
 export function bestPrice(product: Product): number | null {
-  const live = (product.offers || []).filter(o => o.in_stock).map(o => Number(o.price));
-  return live.length ? Math.min(...live) : null;
+  const offers = liveOffers(product);
+  return offers.length ? Number(offers[0].price) : null;
 }
 
 export async function addNewsletterSubscriber(email: string) {
