@@ -1,0 +1,48 @@
+name: Generate Solewar Social Videos
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "scripts/generate_social_videos.py"
+      - ".github/workflows/generate-social-videos.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pillow requests
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg
+
+      - name: Generate videos
+        run: python scripts/generate_social_videos.py
+
+      - name: Commit generated media
+        run: |
+          git config user.name "solewar-bot"
+          git config user.email "hello@solewar.com"
+          git add public/media/social/*.mp4
+          if git diff --cached --quiet; then
+            echo "No media changes"
+          else
+            git commit -m "Generate Solewar social videos"
+            git push origin HEAD:main
+          fi
