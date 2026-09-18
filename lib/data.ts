@@ -74,9 +74,28 @@ export async function getBrands(): Promise<Brand[]> {
   return supabaseFetch<Brand[]>('brands?select=id,name,slug,logo_url&order=name.asc');
 }
 
+export function bestOffer(product: Product): Offer | null {
+  const live = (product.offers || [])
+    .filter(o => o.in_stock)
+    .sort((a,b) => Number(a.price) - Number(b.price));
+  return live[0] || null;
+}
+
 export function bestPrice(product: Product): number | null {
-  const live = (product.offers || []).filter(o => o.in_stock).map(o => Number(o.price));
-  return live.length ? Math.min(...live) : null;
+  const offer = bestOffer(product);
+  return offer ? Number(offer.price) : null;
+}
+
+export function formatMoney(value: number, currency = 'EUR') {
+  try {
+    return new Intl.NumberFormat('en-GB', {
+      style: 'currency',
+      currency,
+      maximumFractionDigits: 2,
+    }).format(value);
+  } catch {
+    return `${currency} ${value.toFixed(2)}`;
+  }
 }
 
 export async function addNewsletterSubscriber(email: string) {
