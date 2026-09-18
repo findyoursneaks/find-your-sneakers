@@ -13,7 +13,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          URL="https://solewar-production-iuiq3nzs5-findyoursneaks.vercel.app"
+          URL="https://solewar-production-findyoursneaks.vercel.app"
           for i in {1..18}; do
             code="$(curl -L -sS -o /tmp/home.html -w "%{http_code}" "$URL" || true)"
             echo "Attempt $i: HTTP $code"
@@ -29,7 +29,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          URL="https://solewar-production-iuiq3nzs5-findyoursneaks.vercel.app/outdoor"
+          URL="https://solewar-production-findyoursneaks.vercel.app/outdoor"
           code="$(curl -L -sS -o /tmp/outdoor.html -w "%{http_code}" "$URL")"
           echo "Outdoor HTTP $code"
           test "$code" = "200"
