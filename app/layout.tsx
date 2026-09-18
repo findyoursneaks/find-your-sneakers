@@ -1,30 +1,31 @@
 import type { Metadata } from 'next';
 import './globals.css';
 import './extra.css';
+import './brand-system.css';
 
 const siteUrl = 'https://solewar.com';
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: 'SOLEWAR — Sneakers, outdoor gear & better deals',
+    default: 'SOLEWAR — Live brands, products & offers',
     template: '%s | SOLEWAR',
   },
-  description: 'Discover sneakers and outdoor performance gear, compare retailer offers and find selected affiliate promotions on SOLEWAR.',
+  description: 'Discover brands that are live on SOLEWAR, browse real products and follow active affiliate offers.',
   applicationName: 'SOLEWAR',
   alternates: { canonical: '/' },
-  keywords: ['sneakers', 'outdoor gear', 'hiking pants', 'price comparison', 'Moosehill', 'Nike', 'adidas', 'New Balance', 'ASICS', 'On', 'Europe'],
+  keywords: ['SOLEWAR', 'brands', 'outdoor gear', 'product discovery', 'affiliate offers', 'Moosehill', 'Europe'],
   openGraph: {
-    title: 'SOLEWAR — Sneakers, outdoor gear & better deals',
-    description: 'Product discovery, retailer offers and selected promotions for sneakers and outdoor performance gear.',
+    title: 'SOLEWAR — Live brands, products & offers',
+    description: 'Brand-led product discovery with real catalogue items and active affiliate destinations.',
     url: siteUrl,
     type: 'website',
     siteName: 'SOLEWAR',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'SOLEWAR — Sneakers, outdoor gear & better deals',
-    description: 'Discover products, compare offers and shop smarter.',
+    title: 'SOLEWAR — Live brands, products & offers',
+    description: 'Discover active brands, real products and live offers.',
   },
 };
 
