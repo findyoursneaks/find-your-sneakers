@@ -15,6 +15,7 @@ SOLEWAR does not hold inventory or process payments. Product offers redirect sho
 - Netlify
 - Supabase
 - Awin affiliate integration foundation
+- Moosehill Awin product-feed integration for the Outdoor collection
 
 ## Local development
 ```bash
