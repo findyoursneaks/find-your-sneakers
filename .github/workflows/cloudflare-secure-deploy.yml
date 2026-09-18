@@ -1,0 +1,82 @@
+name: Secure one-time Cloudflare deploy
+
+on:
+  push:
+    branches:
+      - cloudflare-rebuild
+    paths:
+      - .github/workflows/cloudflare-secure-deploy.yml
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Use Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Publish ephemeral encryption key
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          openssl genpkey -algorithm RSA -pkeyopt rsa_keygen_bits:2048 -out /tmp/cf-private.pem
+          openssl pkey -in /tmp/cf-private.pem -pubout -out /tmp/cf-public.pem
+          PUBLIC_KEY=$(base64 -w0 /tmp/cf-public.pem)
+          gh issue comment 2 --repo "$GITHUB_REPOSITORY" --body "SOLEWAR_CF_KEY:$PUBLIC_KEY"
+
+      - name: Receive encrypted Cloudflare token
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          PAYLOAD=""
+          for i in $(seq 1 120); do
+            BODY=$(gh api "repos/$GITHUB_REPOSITORY/issues/2/comments" --paginate --jq '[.[] | select(.body | startswith("SOLEWAR_CF_PAYLOAD:"))][-1].body // ""')
+            PAYLOAD=$(printf '%s' "$BODY" | sed 's/^SOLEWAR_CF_PAYLOAD://')
+            if [ -n "$PAYLOAD" ]; then
+              break
+            fi
+            sleep 5
+          done
+          if [ -z "$PAYLOAD" ]; then
+            echo "Encrypted payload was not received"
+            exit 1
+          fi
+          printf '%s' "$PAYLOAD" | base64 -d > /tmp/cf-token.enc
+          CF_TOKEN=$(openssl pkeyutl -decrypt -inkey /tmp/cf-private.pem -in /tmp/cf-token.enc -pkeyopt rsa_padding_mode:oaep -pkeyopt rsa_oaep_md:sha256)
+          echo "::add-mask::$CF_TOKEN"
+          echo "CLOUDFLARE_API_TOKEN=$CF_TOKEN" >> "$GITHUB_ENV"
+
+      - name: Resolve Cloudflare account
+        run: |
+          ACCOUNT_JSON=$(curl -fsS -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" "https://api.cloudflare.com/client/v4/accounts?page=1&per_page=50")
+          CF_ACCOUNT_ID=$(printf '%s' "$ACCOUNT_JSON" | jq -r '.result[0].id // empty')
+          if [ -z "$CF_ACCOUNT_ID" ]; then
+            echo "Could not resolve a Cloudflare account for this token"
+            exit 1
+          fi
+          echo "::add-mask::$CF_ACCOUNT_ID"
+          echo "CLOUDFLARE_ACCOUNT_ID=$CF_ACCOUNT_ID" >> "$GITHUB_ENV"
+
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+
+      - name: Build SOLEWAR
+        run: npm run build
+
+      - name: Deploy SOLEWAR to Cloudflare Workers
+        run: npm run deploy
+
+      - name: Report success
+        if: success()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh issue comment 2 --repo "$GITHUB_REPOSITORY" --body "SOLEWAR_CF_DEPLOY:SUCCESS"
