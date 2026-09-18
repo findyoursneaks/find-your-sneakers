@@ -137,3 +137,20 @@ export async function getOffer(offerId: string): Promise<(Offer & { product_id: 
   const offer = rows[0] || null;
   return offer && isLiveAffiliateOffer(offer) ? offer : null;
 }
+
+
+export async function getActiveBrands(): Promise<Brand[]> {
+  const products = await getProducts();
+  const seen = new Map<string, Brand>();
+  for (const product of products) {
+    if (product.brands?.slug && !seen.has(product.brands.slug)) {
+      seen.set(product.brands.slug, product.brands);
+    }
+  }
+  return Array.from(seen.values()).sort((a,b) => a.name.localeCompare(b.name));
+}
+
+export async function getProductsByBrand(slug: string): Promise<Product[]> {
+  const products = await getProducts();
+  return products.filter(product => product.brands?.slug === slug);
+}
