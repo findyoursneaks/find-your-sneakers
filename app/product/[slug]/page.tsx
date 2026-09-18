@@ -27,8 +27,8 @@ export default async function ProductPage({params}:{params:Promise<{slug:string}
   return <main className="product-page">
     <div className="product-topbar"><Link className="logo war-logo" href="/"><span>SOLE</span><b>WAR</b></Link><Link href="/search">← Back to products</Link></div>
     <section className="product-hero">
-      <div className="product-image">{image?<img src={image} alt={`${product.brands?.name||''} ${product.name}`} />:<span>{outdoor?'🥾':'👟'}</span>}</div>
-      <div className="product-info"><small>{product.brands?.name}</small><h1>{product.name}</h1><p>{product.model||product.colorway||'Product'}</p>{winner&&<div className="product-price">Best listed offer <strong>{formatMoney(Number(winner.price),winner.currency)}</strong></div>}<div className="product-tags"><span>{offers.length} offer{offers.length===1?'':'s'} available</span><span>{product.gender}</span>{product.is_new_release&&<span>Featured</span>}</div><p className="product-description">{product.description}</p></div>
+      <div className="product-image">{image?<img src={image} alt={`${product.brands?.name||''} ${product.name}`} />:<span>SOLEWAR</span>}</div>
+      <div className="product-info"><small>{product.brands?.name}</small><h1>{product.name}</h1><p>{product.model||product.colorway||'Product'}</p>{winner&&<div className="product-price">Best listed offer <strong>{formatMoney(Number(winner.price),winner.currency)}</strong></div>}<div className="product-tags"><span>{offers.length} offer{offers.length===1?'':'s'} available</span><span>{product.gender}</span>{product.is_new_release&&<span>Featured</span>}</div><p className="product-description">{product.description}</p>{outdoor&&<div className="feed-coupon"><small>SOLEWAR AUDIENCE CODE</small><strong>SAS15</strong><span>15% off eligible Moosehill purchases. Merchant terms apply.</span></div>}</div>
     </section>
 
     <section className="offers-section">
