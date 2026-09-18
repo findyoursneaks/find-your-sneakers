@@ -25,9 +25,8 @@ export default async function SearchPage({searchParams}:{searchParams:Promise<{q
     <div className="catalog-grid">{filtered.map(p=>{
       const offer=bestOffer(p);
       const image=p.image_url||p.images?.[0];
-      const outdoor=p.brands?.slug==='moosehill';
-      return <Link className="catalog-card" key={p.id} href={outdoor?'/outdoor':`/product/${p.slug}`}>
-        <div className="catalog-visual">{image?<img src={image} alt={`${p.brands?.name||''} ${p.name}`}/>:<span>{outdoor?'🥾':'👟'}</span>}</div>
+      return <Link className="catalog-card" key={p.id} href={`/product/${p.slug}`}>
+        <div className="catalog-visual">{image?<img src={image} alt={`${p.brands?.name||''} ${p.name}`}/>:<span>SOLEWAR</span>}<em>Open product →</em></div>
         <small>{p.brands?.name}</small><h2>{p.name}</h2>
         <p>{offer?<>Best listed offer <strong>{formatMoney(Number(offer.price),offer.currency)}</strong></>:'Offer coming soon'}</p>
         <span>{p.offers?.length||0} offer{p.offers?.length===1?'':'s'} available →</span>
