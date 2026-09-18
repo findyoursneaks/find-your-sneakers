@@ -7,24 +7,24 @@ const siteUrl = 'https://solewar.com';
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: 'SOLEWAR — Compare sneaker prices across Europe',
+    default: 'SOLEWAR — Sneakers, outdoor gear & better deals',
     template: '%s | SOLEWAR',
   },
-  description: 'Compare sneaker prices from leading European retailers and find the best offer for the pair you want.',
+  description: 'Discover sneakers and outdoor performance gear, compare retailer offers and find selected affiliate promotions on SOLEWAR.',
   applicationName: 'SOLEWAR',
   alternates: { canonical: '/' },
-  keywords: ['sneakers', 'sneaker price comparison', 'Nike', 'adidas', 'New Balance', 'ASICS', 'On', 'Europe'],
+  keywords: ['sneakers', 'outdoor gear', 'hiking pants', 'price comparison', 'Moosehill', 'Nike', 'adidas', 'New Balance', 'ASICS', 'On', 'Europe'],
   openGraph: {
-    title: 'SOLEWAR — Find it. Compare it. Win it.',
-    description: 'One search. Multiple stores. Find the best sneaker price across Europe.',
+    title: 'SOLEWAR — Sneakers, outdoor gear & better deals',
+    description: 'Product discovery, retailer offers and selected promotions for sneakers and outdoor performance gear.',
     url: siteUrl,
     type: 'website',
     siteName: 'SOLEWAR',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'SOLEWAR — Compare sneaker prices across Europe',
-    description: 'One search. Multiple stores. Find the best sneaker price across Europe.',
+    title: 'SOLEWAR — Sneakers, outdoor gear & better deals',
+    description: 'Discover products, compare offers and shop smarter.',
   },
 };
 
