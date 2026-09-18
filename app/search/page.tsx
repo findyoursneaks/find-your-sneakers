@@ -17,21 +17,21 @@ export default async function SearchPage({searchParams}:{searchParams:Promise<{q
   return <main className="catalog-page">
     <div className="catalog-head">
       <Link className="logo war-logo" href="/"><span>SOLE</span><b>WAR</b></Link>
-      <span className="eyebrow">PRODUCT DISCOVERY & PRICE BATTLE</span>
-      <h1>Find your next move.</h1>
-      <form className="search" action="/search"><span>⌕</span><input name="q" defaultValue={params.q||''} placeholder="Air Max 95, Samba, HikerFlex..." aria-label="Search products"/><button>Search</button></form>
+      <span className="eyebrow">LIVE PRODUCTS & APPROVED OFFERS</span>
+      <h1>Explore what is live now.</h1>
+      <form className="search" action="/search"><span>⌕</span><input name="q" defaultValue={params.q||''} placeholder="Search Moosehill products..." aria-label="Search products"/><button>Search</button></form>
     </div>
-    <div className="catalog-meta"><strong>{filtered.length}</strong> products {params.q&&<>matching “{params.q}”</>}{brand&&<> · {brand}</>}{gender&&<> · {gender}</>}</div>
+    <div className="catalog-meta"><strong>{filtered.length}</strong> live products {params.q&&<>matching “{params.q}”</>}{brand&&<> · {brand}</>}{gender&&<> · {gender}</>}</div>
     <div className="catalog-grid">{filtered.map(p=>{
       const offer=bestOffer(p);
       const image=p.image_url||p.images?.[0];
       return <Link className="catalog-card" key={p.id} href={`/product/${p.slug}`}>
         <div className="catalog-visual">{image?<img src={image} alt={`${p.brands?.name||''} ${p.name}`}/>:<span>SOLEWAR</span>}<em>Open product →</em></div>
         <small>{p.brands?.name}</small><h2>{p.name}</h2>
-        <p>{offer?<>Best listed offer <strong>{formatMoney(Number(offer.price),offer.currency)}</strong></>:'Offer coming soon'}</p>
-        <span>{p.offers?.length||0} offer{p.offers?.length===1?'':'s'} available →</span>
+        <p>{offer?<>Current offer <strong>{formatMoney(Number(offer.price),offer.currency)}</strong></>:'Offer unavailable'}</p>
+        <span>{offer?'Live affiliate offer →':'Unavailable'}</span>
       </Link>;
     })}</div>
-    {!filtered.length&&<div className="empty-state"><h2>No product found</h2><p>Try another model, category or brand.</p><Link href="/search">View all products</Link></div>}
+    {!filtered.length&&<div className="empty-state"><h2>No live product found</h2><p>Try another Moosehill product or return to the full catalogue.</p><Link href="/search">View all live products</Link></div>}
   </main>;
 }
