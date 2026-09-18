@@ -1,7 +1,7 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "solewar",
-  "compatibility_date": "2026-09-19",
+  "compatibility_date": "2026-09-18",
   "compatibility_flags": ["nodejs_compat"],
   "main": "vinext/server/app-router-entry",
   "workers_dev": true,
