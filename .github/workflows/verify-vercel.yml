@@ -33,5 +33,8 @@ jobs:
           code="$(curl -L -sS -o /tmp/outdoor.html -w "%{http_code}" "$URL")"
           echo "Outdoor HTTP $code"
           test "$code" = "200"
+          echo '--- OUTDOOR BODY SNIPPET ---'
+          head -c 3000 /tmp/outdoor.html
+          echo
           grep -qi "Moosehill" /tmp/outdoor.html
           grep -qi "SAS15" /tmp/outdoor.html
