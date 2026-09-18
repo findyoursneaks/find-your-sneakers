@@ -10,8 +10,8 @@ export async function generateMetadata({params}:{params:Promise<{slug:string}>})
   if(!product) return {title:'Product not found — SOLEWAR'};
   const offer=bestOffer(product);
   return {
-    title:`${product.brands?.name||''} ${product.name} — Offers | SOLEWAR`,
-    description: offer ? `See the current listed offer for ${product.brands?.name||''} ${product.name} from ${formatMoney(Number(offer.price),offer.currency)}.` : `Discover offers for ${product.brands?.name||''} ${product.name} on SOLEWAR.`,
+    title:`${product.brands?.name||''} ${product.name} — SOLEWAR`,
+    description: offer ? `See the active offer for ${product.brands?.name||''} ${product.name} from ${formatMoney(Number(offer.price),offer.currency)}.` : `Discover ${product.brands?.name||''} ${product.name} on SOLEWAR.`,
   };
 }
 
@@ -19,31 +19,50 @@ export default async function ProductPage({params}:{params:Promise<{slug:string}
   const {slug}=await params;
   const product=await getProductBySlug(slug);
   if(!product) notFound();
-  const offers=[...(product.offers||[])].sort((a,b)=>Number(a.price)-Number(b.price));
+
+  const offers=(product.offers||[])
+    .filter(offer => offer.in_stock && offer.retailers?.affiliate_enabled && (offer.affiliate_url || offer.product_url))
+    .sort((a,b)=>Number(a.price)-Number(b.price));
+
   const winner=bestOffer(product);
   const image=product.image_url || product.images?.[0];
-  const outdoor=product.brands?.slug==='moosehill';
+  const brandHref=`/brands/${product.brands?.slug}`;
+  const isMoosehill=product.brands?.slug==='moosehill';
 
   return <main className="product-page">
-    <div className="product-topbar"><Link className="logo war-logo" href="/"><span>SOLE</span><b>WAR</b></Link><Link href="/search">← Back to products</Link></div>
+    <div className="product-topbar">
+      <Link className="logo war-logo" href="/"><span>SOLE</span><b>WAR</b></Link>
+      <div className="product-breadcrumbs"><Link href={brandHref}>← {product.brands?.name}</Link><Link href="/search">All products</Link></div>
+    </div>
+
     <section className="product-hero">
       <div className="product-image">{image?<img src={image} alt={`${product.brands?.name||''} ${product.name}`} />:<span>SOLEWAR</span>}</div>
-      <div className="product-info"><small>{product.brands?.name}</small><h1>{product.name}</h1><p>{product.model||product.colorway||'Product'}</p>{winner&&<div className="product-price">Best listed offer <strong>{formatMoney(Number(winner.price),winner.currency)}</strong></div>}<div className="product-tags"><span>{offers.length} offer{offers.length===1?'':'s'} available</span><span>{product.gender}</span>{product.is_new_release&&<span>Featured</span>}</div><p className="product-description">{product.description}</p>{outdoor&&<div className="feed-coupon"><small>SOLEWAR AUDIENCE CODE</small><strong>SAS15</strong><span>15% off eligible Moosehill purchases. Merchant terms apply.</span></div>}</div>
+      <div className="product-info">
+        <small>{product.brands?.name}</small>
+        <h1>{product.name}</h1>
+        <p>{product.model||product.colorway||'Product'}</p>
+        {winner&&<div className="product-price">Current offer <strong>{formatMoney(Number(winner.price),winner.currency)}</strong></div>}
+        <div className="product-tags">
+          <span>{offers.length} live offer{offers.length===1?'':'s'}</span>
+          {product.gender&&<span>{product.gender}</span>}
+          {product.is_new_release&&<span>Featured</span>}
+        </div>
+        {product.description&&<p className="product-description">{product.description}</p>}
+        {isMoosehill&&<div className="feed-coupon"><small>SOLEWAR AUDIENCE CODE</small><strong>SAS15</strong><span>15% off eligible Moosehill purchases. Merchant terms apply.</span></div>}
+      </div>
     </section>
 
     <section className="offers-section">
-      <div className="title"><div><span>AVAILABLE OFFERS</span><h2>Retailers & brand stores</h2></div></div>
-      <div className="offer-list">{offers.map((offer,index)=>{
-        const disabled=!offer.retailers?.affiliate_enabled;
-        return <article className="offer-row" key={offer.id}>
-          <div><small>{index===0?'BEST LISTED OFFER':'OFFER'}</small><h3>{offer.retailers?.name||'Retailer'}</h3>{disabled&&<span className="demo-pill">Feed pending</span>}</div>
+      <div className="title"><div><span>ACTIVE OFFERS</span><h2>Shop through an approved destination</h2></div></div>
+      <div className="offer-list">{offers.map((offer,index)=>
+        <article className="offer-row" key={offer.id}>
+          <div><small>{index===0?'BEST ACTIVE OFFER':'ACTIVE OFFER'}</small><h3>{offer.retailers?.name||product.brands?.name||'Retailer'}</h3></div>
           <div className="size-list">{(offer.available_sizes||[]).slice(0,5).map(size=><span key={size}>{size}</span>)}</div>
           <div className="offer-price"><strong>{formatMoney(Number(offer.price),offer.currency)}</strong>{offer.old_price&&Number(offer.old_price)>Number(offer.price)&&<del>{formatMoney(Number(offer.old_price),offer.currency)}</del>}</div>
-          {disabled?<button className="buy disabled" disabled>Live link pending</button>:<Link className="buy" href={`/go/${offer.id}`} rel="nofollow sponsored">View this offer →</Link>}
+          <Link className="buy" href={`/go/${offer.id}`} rel="nofollow sponsored">Shop offer →</Link>
         </article>
-      })}</div>
-      {!offers.length&&<div className="empty-state"><h3>No live offer yet</h3><p>Retailer feeds are being connected.</p></div>}
-      <p className="affiliate-note">SOLEWAR may earn a commission from eligible retailer links. This does not change the price you pay. Prices, promo codes and availability can change on the retailer site.</p>
+      )}</div>
+      <p className="affiliate-note">SOLEWAR may earn a commission from eligible partner links. This does not change the price you pay. Price, stock, promotion eligibility and checkout terms are confirmed by the merchant.</p>
     </section>
   </main>;
 }
