@@ -4,8 +4,6 @@ import { formatMoney } from '../../../../lib/data';
 import { loadMoosehillFeed } from '../../../../lib/affiliate/moosehill-feed';
 
 export const dynamic='force-dynamic';
-export const revalidate=0;
-
 export default async function MoosehillProductPage({params}:{params:Promise<{id:string}>}){
   const {id}=await params;
   const decoded=decodeURIComponent(id);
