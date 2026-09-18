@@ -33,6 +33,8 @@ export type Product = {
   is_trending?: boolean;
   is_new_release?: boolean;
   release_date?: string | null;
+  source?: string | null;
+  external_id?: string | null;
   brands: Brand;
   offers: Offer[];
 };
@@ -59,10 +61,13 @@ async function supabaseFetch<T>(path: string, init?: RequestInit): Promise<T> {
   return response.json();
 }
 
-const productSelect = 'id,name,slug,model,gender,colorway,description,image_url,images,is_trending,is_new_release,release_date,brands(id,name,slug,logo_url),offers(id,price,old_price,original_price,currency,in_stock,available_sizes,affiliate_url,product_url,retailers(id,name,slug,affiliate_enabled))';
+const productSelect = 'id,name,slug,model,gender,colorway,description,image_url,images,is_trending,is_new_release,release_date,source,external_id,brands(id,name,slug,logo_url),offers(id,price,old_price,original_price,currency,in_stock,available_sizes,affiliate_url,product_url,retailers(id,name,slug,affiliate_enabled))';
 
 export async function getProducts(): Promise<Product[]> {
-  return supabaseFetch<Product[]>(`products?select=${encodeURIComponent(productSelect)}&order=created_at.desc`);
+  const rows = await supabaseFetch<Product[]>(`products?select=${encodeURIComponent(productSelect)}&order=created_at.desc`);
+  const hasSyncedMoosehill = rows.some(p => p.brands?.slug === 'moosehill' && p.source === 'moosehill-shopify');
+  if (!hasSyncedMoosehill) return rows;
+  return rows.filter(p => p.brands?.slug !== 'moosehill' || p.source === 'moosehill-shopify');
 }
 
 export async function getProductBySlug(slug: string): Promise<Product | null> {
