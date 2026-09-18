@@ -63,16 +63,29 @@ async function supabaseFetch<T>(path: string, init?: RequestInit): Promise<T> {
 
 const productSelect = 'id,name,slug,model,gender,colorway,description,image_url,images,is_trending,is_new_release,release_date,source,external_id,brands(id,name,slug,logo_url),offers(id,price,old_price,original_price,currency,in_stock,available_sizes,affiliate_url,product_url,retailers(id,name,slug,affiliate_enabled))';
 
+function isLiveAffiliateOffer(offer: Offer) {
+  return Boolean(
+    offer?.in_stock &&
+    offer?.retailers?.affiliate_enabled &&
+    (offer?.affiliate_url || offer?.product_url)
+  );
+}
+
 export async function getProducts(): Promise<Product[]> {
   const rows = await supabaseFetch<Product[]>(`products?select=${encodeURIComponent(productSelect)}&order=created_at.desc`);
   const hasSyncedMoosehill = rows.some(p => p.brands?.slug === 'moosehill' && p.source === 'moosehill-shopify');
-  if (!hasSyncedMoosehill) return rows;
-  return rows.filter(p => p.brands?.slug !== 'moosehill' || p.source === 'moosehill-shopify');
+  const normalized = hasSyncedMoosehill
+    ? rows.filter(p => p.brands?.slug !== 'moosehill' || p.source === 'moosehill-shopify')
+    : rows;
+
+  return normalized.filter(p => (p.offers || []).some(isLiveAffiliateOffer));
 }
 
 export async function getProductBySlug(slug: string): Promise<Product | null> {
   const rows = await supabaseFetch<Product[]>(`products?select=${encodeURIComponent(productSelect)}&slug=eq.${encodeURIComponent(slug)}&limit=1`);
-  return rows[0] || null;
+  const product = rows[0] || null;
+  if (!product) return null;
+  return (product.offers || []).some(isLiveAffiliateOffer) ? product : null;
 }
 
 export async function getBrands(): Promise<Brand[]> {
@@ -81,7 +94,7 @@ export async function getBrands(): Promise<Brand[]> {
 
 export function bestOffer(product: Product): Offer | null {
   const live = (product.offers || [])
-    .filter(o => o.in_stock)
+    .filter(isLiveAffiliateOffer)
     .sort((a,b) => Number(a.price) - Number(b.price));
   return live[0] || null;
 }
@@ -121,5 +134,6 @@ export async function trackClick(offerId: string, referrer?: string | null) {
 
 export async function getOffer(offerId: string): Promise<(Offer & { product_id: string }) | null> {
   const rows = await supabaseFetch<(Offer & { product_id: string })[]>(`offers?select=id,product_id,price,currency,in_stock,affiliate_url,product_url,retailers(id,name,slug,affiliate_enabled)&id=eq.${encodeURIComponent(offerId)}&limit=1`);
-  return rows[0] || null;
+  const offer = rows[0] || null;
+  return offer && isLiveAffiliateOffer(offer) ? offer : null;
 }
