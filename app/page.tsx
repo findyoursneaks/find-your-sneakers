@@ -9,7 +9,7 @@ export default async function Home() {
   const trending = products.filter(p => p.is_trending).slice(0, 8);
   const display = trending.length ? trending : products.slice(0, 8);
   const heroSneaker = products.find(p => p.slug === 'nike-air-max-95') || products.find(p => p.brands?.slug !== 'moosehill' && (p.image_url || p.images?.[0]));
-  const heroOutdoor = products.find(p => p.slug === 'moosehill-hikerflex-m015') || products.find(p => p.brands?.slug === 'moosehill' && (p.image_url || p.images?.[0]));
+  const heroOutdoor = products.find(p => p.brands?.slug === 'moosehill' && (p.image_url || p.images?.[0]));
   const moosehill = brands.find(b => b.slug === 'moosehill');
   const brandDisplay = [moosehill, ...brands.filter(b => b.slug !== 'moosehill')].filter(Boolean).slice(0, 9) as typeof brands;
 
@@ -45,7 +45,7 @@ export default async function Home() {
       </section>
 
       <section className="outdoor-feature">
-        <div className="outdoor-copy"><span className="hero-kicker">FEATURED OUTDOOR PARTNER</span><h2>Moosehill, now live on SOLEWAR.</h2><p>Hiking, cycling and active-lifestyle apparel now sit alongside our sneaker catalogue. Browse real product photography, current feed items and the affiliate audience promotion.</p><div className="hero-buttons"><Link className="primary" href="/outdoor">Explore Moosehill →</Link><Link className="secondary" href="/search?brand=moosehill">View products</Link></div></div>
+        <div className="outdoor-copy"><span className="hero-kicker">FEATURED OUTDOOR PARTNER</span><h2>Moosehill, now live on SOLEWAR.</h2><p>Hiking, cycling and active-lifestyle apparel now sit alongside our sneaker catalogue. Browse real product photography, current catalogue items and the affiliate audience promotion.</p><div className="hero-buttons"><Link className="primary" href="/outdoor">Explore Moosehill →</Link><Link className="secondary" href="/search?brand=moosehill">View products</Link></div></div>
         <div className="outdoor-offer">
           {heroOutdoor?.image_url && <Link href={`/product/${heroOutdoor.slug}`} className="outdoor-feature-image"><img src={heroOutdoor.image_url} alt={heroOutdoor.name}/></Link>}
           <span>OUTDOOR OFFER</span><strong>15% OFF</strong><code>SAS15</code><small>Use at MoosehillStore.com · offer terms and availability may change.</small>
