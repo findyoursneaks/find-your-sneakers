@@ -39,7 +39,7 @@ function money(value:string){
 export async function loadMoosehillFeed(limit=48):Promise<MoosehillFeedProduct[]>{
   const url=process.env.AWIN_MOOSEHILL_FEED_URL;
   if(!url) return [];
-  const res=await fetch(url,{next:{revalidate:1800}});
+  const res=await fetch(url,{cache:'no-store'});
   if(!res.ok) throw new Error(`Moosehill feed ${res.status}`);
   const zipped=Buffer.from(await res.arrayBuffer());
   const text=gunzipSync(zipped).toString('utf8');
