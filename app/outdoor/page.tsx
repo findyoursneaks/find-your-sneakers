@@ -7,25 +7,29 @@ export const revalidate = 0;
 
 export const metadata = {
   title: 'Outdoor gear — Moosehill hiking & active apparel',
-  description: 'Explore selected Moosehill hiking and outdoor products on SOLEWAR, including the current 15% affiliate audience code SAS15.',
+  description: 'Explore Moosehill hiking and outdoor products on SOLEWAR, including the current 15% affiliate audience code SAS15.',
 };
 
 export default async function OutdoorPage(){
   const [dbProducts,liveFeed]=await Promise.all([
     getProducts().then(items=>items.filter(p=>p.brands?.slug==='moosehill')),
-    loadMoosehillFeed(48).catch(()=>[]),
+    loadMoosehillFeed(72).catch(()=>[]),
   ]);
   const usingLive=liveFeed.length>0;
+  const hero = liveFeed.find(p=>p.image) || null;
 
   return <main className="outdoor-page">
-    <div className="outdoor-page-nav"><Link className="logo war-logo" href="/"><span>SOLE</span><b>WAR</b></Link><Link href="/search">All products</Link></div>
+    <div className="outdoor-page-nav"><Link className="logo war-logo" href="/"><span>SOLE</span><b>WAR</b></Link><div><Link href="/search">All products</Link><Link href="/">Home</Link></div></div>
     <section className="outdoor-page-hero">
-      <div><span className="hero-kicker">SOLEWAR OUTDOOR</span><h1>Moosehill</h1><p>Performance apparel for hiking, cycling and active everyday use. SOLEWAR now uses the Moosehill Awin product feed to keep this collection fresher.</p><div className="outdoor-badges"><span>Hiking</span><span>Cycling</span><span>Quick-dry</span><span>Active lifestyle</span></div></div>
-      <div className="coupon-card"><small>AFFILIATE AUDIENCE OFFER</small><strong>15% OFF</strong><span>CODE</span><code>SAS15</code><p>Use on eligible Moosehill purchases. Final price, eligibility and availability are confirmed on the merchant site.</p></div>
+      <div><span className="hero-kicker">SOLEWAR OUTDOOR × MOOSEHILL</span><h1>Go further.</h1><p>Performance apparel for hiking, cycling and active everyday use. Explore a larger Moosehill selection with real product photography and Awin-powered shopping links.</p><div className="outdoor-badges"><span>Hiking</span><span>Cycling</span><span>Quick-dry</span><span>Active lifestyle</span></div></div>
+      <div className="outdoor-hero-side">
+        {hero?.image && <Link href={`/outdoor/product/${encodeURIComponent(hero.id)}`} className="outdoor-hero-product"><img src={hero.image} alt={hero.title}/></Link>}
+        <div className="coupon-card"><small>AFFILIATE AUDIENCE OFFER</small><strong>15% OFF</strong><span>CODE</span><code>SAS15</code><p>Use on eligible Moosehill purchases. Final price, eligibility and availability are confirmed on the merchant site.</p></div>
+      </div>
     </section>
 
     <section className="outdoor-products">
-      <div className="trend-head"><div><h2>{usingLive?'Live Moosehill feed':'Selected HikerFlex styles'}</h2><p>{usingLive?'Products, images and prices supplied through Awin.':'Current listed prices from MoosehillStore.com.'}</p></div></div>
+      <div className="trend-head"><div><h2>{usingLive?'Moosehill collection':'Selected HikerFlex styles'}</h2><p>{usingLive?`${liveFeed.length} products loaded from the current Awin feed.`:'Current listed products from MoosehillStore.com.'}</p></div></div>
       <div className="outdoor-grid">{usingLive?liveFeed.map(p=><FeedCard key={p.id} p={p}/>):dbProducts.map(p=><OutdoorCard key={p.id} p={p}/>)}</div>
     </section>
 
@@ -35,15 +39,18 @@ export default async function OutdoorPage(){
 }
 
 function FeedCard({p}:{p:MoosehillFeedProduct}){
+  const detail=`/outdoor/product/${encodeURIComponent(p.id)}`;
   return <article className="outdoor-product-card">
-    <div className="outdoor-product-visual">{p.image?<img src={p.image} alt={p.title}/>:<span>🥾</span>}</div>
-    <small>{p.brand||'Moosehill'}</small><h3>{p.title}</h3><p>{p.description||'Outdoor performance apparel from Moosehill.'}</p>
-    <div className="outdoor-product-bottom"><strong>{p.price!=null?formatMoney(p.price,p.currency):'See price'}</strong><a href={p.link} rel="nofollow sponsored" target="_blank">Shop via SOLEWAR →</a></div>
+    <Link href={detail} className="outdoor-product-link">
+      <div className="outdoor-product-visual">{p.image?<img src={p.image} alt={p.title}/>:<span>SOLEWAR</span>}<em>View product →</em></div>
+      <small>{p.brand||'Moosehill'}</small><h3>{p.title}</h3><p>{p.description||'Outdoor performance apparel from Moosehill.'}</p>
+    </Link>
+    <div className="outdoor-product-bottom"><strong>{p.price!=null?formatMoney(p.price,p.currency):'See price'}</strong><a href={p.link} rel="nofollow sponsored" target="_blank">Shop →</a></div>
   </article>;
 }
 
 function OutdoorCard({p}:{p:Product}){
   const offer=bestOffer(p);
   const image=p.image_url||p.images?.[0];
-  return <article className="outdoor-product-card"><div className="outdoor-product-visual">{image?<img src={image} alt={(p.brands?.name||'')+' '+p.name}/>:<span>🥾</span>}</div><small>{p.model}</small><h3>{p.name}</h3><p>{p.description}</p><div className="outdoor-product-bottom"><strong>{offer?formatMoney(Number(offer.price),offer.currency):'Offer pending'}</strong>{offer?<Link href={`/go/${offer.id}`} rel="nofollow sponsored">Shop via SOLEWAR →</Link>:<span>Coming soon</span>}</div></article>;
+  return <article className="outdoor-product-card"><Link href={`/product/${p.slug}`} className="outdoor-product-link"><div className="outdoor-product-visual">{image?<img src={image} alt={(p.brands?.name||'')+' '+p.name}/>:<span>SOLEWAR</span>}<em>View product →</em></div><small>{p.model}</small><h3>{p.name}</h3><p>{p.description}</p></Link><div className="outdoor-product-bottom"><strong>{offer?formatMoney(Number(offer.price),offer.currency):'Offer pending'}</strong>{offer?<Link href={`/go/${offer.id}`} rel="nofollow sponsored">Shop →</Link>:<span>Coming soon</span>}</div></article>;
 }
