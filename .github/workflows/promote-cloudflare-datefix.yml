@@ -1,0 +1,23 @@
+name: Promote Cloudflare date fix
+
+on:
+  push:
+    branches:
+      - datefix
+    paths:
+      - .github/workflows/promote-cloudflare-datefix.yml
+
+permissions:
+  contents: write
+
+jobs:
+  promote:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Re-emit Cloudflare migration push
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh api --method PATCH "repos/$GITHUB_REPOSITORY/git/refs/heads/cloudflare-rebuild" -f sha="6feafcfc121d3f8cab043e7ee77ba87f835432b5" -F force=true
+          sleep 2
+          gh api --method PATCH "repos/$GITHUB_REPOSITORY/git/refs/heads/cloudflare-rebuild" -f sha="$GITHUB_SHA" -F force=true
