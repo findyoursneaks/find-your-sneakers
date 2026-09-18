@@ -53,7 +53,7 @@ async function supabaseFetch<T>(path: string, init?: RequestInit): Promise<T> {
   const url = `${SUPABASE_URL}/rest/v1/${path}`;
   const isGet = !init?.method || init.method.toUpperCase() === 'GET';
   const response = isGet
-    ? await fetch(url, { ...options, next: { revalidate: 300 } })
+    ? await fetch(url, { ...options, cache: 'no-store' })
     : await fetch(url, options);
 
   if (!response.ok) throw new Error(`Supabase ${response.status}: ${await response.text()}`);
