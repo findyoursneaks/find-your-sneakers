@@ -1,1 +1,34 @@
-{"name":"solewar","version":"1.0.0","private":true,"scripts":{"dev":"next dev","build":"next build","start":"next start"},"engines":{"node":">=20"},"dependencies":{"@types/node":"latest","@types/react":"latest","@types/react-dom":"latest","next":"latest","react":"latest","react-dom":"latest","typescript":"latest"},"devDependencies":{}}
+{
+  "name": "solewar",
+  "version": "2.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vinext dev",
+    "build": "vinext build",
+    "start": "vinext start",
+    "deploy": "vinext build && wrangler deploy",
+    "dev:next": "next dev",
+    "build:next": "next build"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "dependencies": {
+    "next": "16.2.3",
+    "react": "19.2.6",
+    "react-dom": "19.2.6",
+    "react-server-dom-webpack": "19.2.6",
+    "vinext": "0.0.49"
+  },
+  "devDependencies": {
+    "@cloudflare/vite-plugin": "1.36.4",
+    "@types/node": "latest",
+    "@types/react": "latest",
+    "@types/react-dom": "latest",
+    "@vitejs/plugin-rsc": "0.5.26",
+    "typescript": "latest",
+    "vite": "8.0.10",
+    "wrangler": "4.91.0"
+  }
+}
