@@ -2,11 +2,19 @@
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "solewar",
   "compatibility_date": "2026-09-18",
-  "compatibility_flags": ["nodejs_compat"],
+  "compatibility_flags": [
+    "nodejs_compat"
+  ],
   "main": "vinext/server/app-router-entry",
   "workers_dev": true,
   "preview_urls": true,
   "assets": {
     "not_found_handling": "none"
-  }
+  },
+  "routes": [
+    {
+      "pattern": "solewar.com",
+      "custom_domain": true
+    }
+  ]
 }
