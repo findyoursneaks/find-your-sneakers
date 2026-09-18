@@ -2,7 +2,8 @@ import Link from 'next/link';
 import { bestOffer, formatMoney, getProducts, Product } from '../../lib/data';
 import { loadMoosehillFeed, MoosehillFeedProduct } from '../../lib/affiliate/moosehill-feed';
 
-export const revalidate = 1800;
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 export const metadata = {
   title: 'Outdoor gear — Moosehill hiking & active apparel',
