@@ -2,8 +2,6 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { bestOffer, formatMoney, getProductBySlug } from '../../../lib/data';
 
-export const revalidate = 300;
-
 export async function generateMetadata({params}:{params:Promise<{slug:string}>}){
   const {slug}=await params;
   const product=await getProductBySlug(slug);

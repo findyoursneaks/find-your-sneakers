@@ -1,8 +1,6 @@
 import Link from 'next/link';
 import { bestOffer, formatMoney, getProducts } from '../../lib/data';
 
-export const revalidate = 300;
-
 export default async function SearchPage({searchParams}:{searchParams:Promise<{q?:string;brand?:string;gender?:string}>}){
   const params=await searchParams;
   const q=(params.q||'').toLowerCase();

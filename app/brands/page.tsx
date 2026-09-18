@@ -2,8 +2,6 @@ import Link from 'next/link';
 import { getActiveBrands, getProducts } from '../../lib/data';
 import { getBrandProfile } from '../../lib/brand-config';
 
-export const revalidate = 300;
-
 export const metadata = {
   title: 'Brands — SOLEWAR',
   description: 'Explore brands currently live on SOLEWAR with active commercial offers.',

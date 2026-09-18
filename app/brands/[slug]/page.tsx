@@ -4,8 +4,6 @@ import { notFound } from 'next/navigation';
 import { bestOffer, formatMoney, getActiveBrands, getProductsByBrand, Product } from '../../../lib/data';
 import { getBrandProfile } from '../../../lib/brand-config';
 
-export const revalidate = 300;
-
 export async function generateStaticParams() {
   const brands = await getActiveBrands();
   return brands.map(brand => ({ slug: brand.slug }));

@@ -3,8 +3,6 @@ import { bestOffer, formatMoney, getActiveBrands, getProducts, Product } from '.
 import { getBrandProfile } from '../lib/brand-config';
 import NewsletterForm from './newsletter-form';
 
-export const revalidate = 300;
-
 export default async function Home() {
   const [products, brands] = await Promise.all([getProducts(), getActiveBrands()]);
   const display = products.slice(0, 8);
