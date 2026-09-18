@@ -24,10 +24,10 @@ jobs:
           NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: sb_publishable_XB79v_WDUxiI-0LH2NixeQ_H0Rt70O1
         run: npm run build
       - name: Package source for deployment handoff
-        run: tar --exclude=.git --exclude=node_modules --exclude=.next -czf solewar-source.tgz .
+        run: tar --exclude=.git --exclude=node_modules --exclude=.next -czf /tmp/solewar-source.tgz .
       - name: Upload deployment source
         uses: actions/upload-artifact@v4
         with:
           name: solewar-deploy-source
-          path: solewar-source.tgz
+          path: /tmp/solewar-source.tgz
           retention-days: 1
